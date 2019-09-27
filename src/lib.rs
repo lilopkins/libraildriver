@@ -20,7 +20,6 @@
 //! }
 //! ```
 
-
 extern crate libraildriver_sys as libraildriver;
 extern crate libc;
 

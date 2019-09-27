@@ -5,8 +5,8 @@ use std::io;
 fn main() {
     let context = libraildriver::Context::new();
 
-    let mut inp = String::new();
     loop {
+        let mut inp = String::new();
         io::stdin().read_line(&mut inp).expect("Failed to read from stdin.");
 
         let trimmed = inp.trim();
