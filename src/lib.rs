@@ -159,6 +159,30 @@ pub enum Value {
     FreeCamera,
 }
 
+/// The value of data supposedly from the controller, although RailDriver does offer some
+/// 'virtual' values.
+#[derive(Debug)]
+pub enum ControllerValue {
+    /// Latitude of the player
+    Latitude = 400,
+    /// Longitude of the player
+    Longitude,
+    /// Fuel level of the train
+    FuelLevel,
+    /// Is the train in a tunnel
+    InTunnel,
+    /// Gradient of the track
+    Gradient,
+    /// Heading of the player
+    Heading,
+    /// Time of day, hour component
+    TimeHours,
+    /// Time of day, minute component
+    TimeMinutes,
+    /// Time of day, second component
+    TimeSeconds,
+}
+
 #[derive(Debug)]
 /// The kind of value that is required
 pub enum Kind {
@@ -233,5 +257,16 @@ impl Context {
         let value = value as libc::c_int;
         unsafe { libraildriver::SetRailSimValue(of, value); }
         Ok(())
+    }
+
+    /// Return the value of `of` from the virtual controller. Depending on `kind`, this may
+    /// return the current value, a minimum, or a maximum.
+    pub fn get_controller_value(&self, of: ControllerValue, kind: Kind) -> Result<f32> {
+        if !self.connected {
+            return Err(RailDriverError::NotConnected);
+        }
+        let of = of as libc::c_int;
+        let kind = kind as libc::c_int;
+        unsafe { Ok(libraildriver::GetControllerValue(of, kind)) }
     }
 }
