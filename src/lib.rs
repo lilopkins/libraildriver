@@ -1,29 +1,13 @@
+#![deny(clippy::pedantic)]
+#![deny(clippy::unwrap_used)]
+#![deny(clippy::expect_used)]
 #![deny(missing_docs)]
+#![doc = include_str!("../README.md")]
 
-//! # Lib Rail Driver
-//!
-//! Rust FFI bindings to the `RailDriver.dll` library.
-//!
-//! These allow you to read and write data to or from Train Simulator 2020. Note
-//! that this doesn't work with Train Sim World.
-//!
-//! ## Quick example
-//!
-//! ```rust
-//! extern crate libraildriver;
-//!
-//! fn main() {
-//!     let context = libraildriver::Context::new();
-//!     let speed = context.get_value(libraildriver::Value::Speedometer,
-//!                   libraildriver::Kind::Current).expect("Failed to get value.");
-//!     println!("The train's current speed is: {}", speed);
-//! }
-//! ```
-
-extern crate libraildriver_sys as libraildriver;
 extern crate libc;
+extern crate libraildriver_sys as libraildriver;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 /// The value you wish to target for an operation.
 pub enum Value {
     /// The current reverser setting (F/N/R).
@@ -32,11 +16,13 @@ pub enum Value {
     /// - `0`: N
     /// - `-1`: R
     Reverser,
-    /// The current throttle setting, usually between `0` and `100`. For locomotives and units with
-    /// a separate throttle and brake control.
+    /// The current throttle setting, usually between `0` and `100`. For
+    /// locomotives and units with a separate throttle and brake
+    /// control.
     Throttle,
-    /// The current combined throttle/brake setting, usually between `-100` and `100`. For
-    /// locomotives and units with a combined throttle and brake.
+    /// The current combined throttle/brake setting, usually between
+    /// `-100` and `100`. For locomotives and units with a combined
+    /// throttle and brake.
     CombinedThrottle,
     /// The current gear, for trains fitted.
     GearLever,
@@ -50,7 +36,8 @@ pub enum Value {
     EmergencyBrake,
     /// The hand brake. Usually operated by setting to `1`.
     HandBrake,
-    /// The warning system reset button. Usually operated by setting to `1`.
+    /// The warning system reset button. Usually operated by setting to
+    /// `1`.
     WarningSystemReset,
     /// The engine start/stop button. Usually operated by setting to `1`.
     StartStopEngine,
@@ -96,14 +83,16 @@ pub enum Value {
     /// Get only: The current speed of the unit.
     Speedometer,
     // Events
-    /// The save event, usually triggered by `F2`, triggered when set to `1`.
+    /// The save event, usually triggered by `F2`, triggered when set to
+    /// `1`.
     PromptSave,
     /// Toggle labels, triggered when set to `1`.
     // TODO: Check if this is toggled or enabled.
     ToggleLabels,
     /// The 2D Map, usually triggered by `9`, triggered when set to `1`.
     Toggle2DMap,
-    /// Toggle the HUD visibilty, usually triggered by `F3` or `F4`, triggered when set to `1`.
+    /// Toggle the HUD visibilty, usually triggered by `F3` or `F4`,
+    /// triggered when set to `1`.
     ToggleHud,
     /// Currently undocumented.
     ToggleQut,
@@ -116,51 +105,63 @@ pub enum Value {
     ToggleRvNumber,
     /// Close the dialog given to you by an assignment in a scenario.
     DialogAssignment,
-    /// Switch the set of points to the front of the train, triggered when set to `1`.
+    /// Switch the set of points to the front of the train, triggered
+    /// when set to `1`.
     SwitchJunctionAhead,
-    /// Switch the set of points to the rear of the train, triggered when set to `1`.
+    /// Switch the set of points to the rear of the train, triggered
+    /// when set to `1`.
     SwitchJunctionBehind,
     /// The load cargo event, triggered when set to `1`.
     LoadCargo,
     /// The unload cargo action, triggered when set to `1`.
     UnloadCargo,
-    /// Request to pass a signal at danger to the front of the train, usually triggered by `Tab`,
-    /// triggered when set to `1`.
+    /// Request to pass a signal at danger to the front of the train,
+    /// usually triggered by `Tab`, triggered when set to `1`.
     PassAtDangerAhead,
-    /// Request to pass a signal at danger to the rear of the train, usually triggered by
-    /// `Shift Tab`, triggered when set to `1`.
+    /// Request to pass a signal at danger to the rear of the train,
+    /// usually triggered by `Shift Tab`, triggered when set to `1`.
     PassAtDangerBehind,
     /// Manual coupling, triggered when set to `1`.
     ManualCouple,
+
     // Camera
-    /// The cab camera, usually operated by pressing `1`, switched to by setting to `1`.
-    CabCamera,
-    /// The follow camera, usually operated by pressing `2`, switched to by setting to `1`.
-    FollowCamera,
-    /// The head-out-window camera, usually operated by pressing `Shift 2`, switched to by setting
-    /// to `1`.
-    HeadOutCamera,
-    /// The rear camera, usually operated by pressing `3`, switched to by setting to `1`.
-    RearCamera,
-    /// The track-side camera, usually operated by pressing `4`, switched to by setting to `1`.
-    TrackSideCamera,
-    /// The passenger-view (carriage) camera, usually operated by pressing `5`, switched to by
+    /// The cab camera, usually operated by pressing `1`, switched to by
     /// setting to `1`.
+    CabCamera,
+    /// The follow camera, usually operated by pressing `2`, switched to
+    /// by setting to `1`.
+    FollowCamera,
+    /// The head-out-window camera, usually operated by pressing `Shift
+    /// 2`, switched to by setting to `1`.
+    HeadOutCamera,
+    /// The rear camera, usually operated by pressing `3`, switched to
+    /// by setting to `1`.
+    RearCamera,
+    /// The track-side camera, usually operated by pressing `4`,
+    /// switched to by setting to `1`.
+    TrackSideCamera,
+    /// The passenger-view (carriage) camera, usually operated by
+    /// pressing `5`, switched to by setting to `1`.
     CarriageCamera,
-    /// The coupling camera, usually operated by pressing `6`, switched to by setting to `1`.
+    /// The coupling camera, usually operated by pressing `6`, switched
+    /// to by setting to `1`.
     CouplingCamera,
-    /// The yard camera, usually operated by pressing `7`, switched to by setting to `1`.
+    /// The yard camera, usually operated by pressing `7`, switched to
+    /// by setting to `1`.
     YardCamera,
-    /// Cab camera switch, usually operated by pressing `Ctrl +`, switched to by setting to `1`.
+    /// Cab camera switch, usually operated by pressing `Ctrl +`,
+    /// switched to by setting to `1`.
     SwitchToNextFrontCab,
-    /// Cab camera switch, usually operated by pressing `Ctrl -`, switched to by setting to `1`.
+    /// Cab camera switch, usually operated by pressing `Ctrl -`,
+    /// switched to by setting to `1`.
     SwitchToNextRearCab,
-    /// The free camera, usually operated by pressing `8`, switched to by setting to `1`.
+    /// The free camera, usually operated by pressing `8`, switched to
+    /// by setting to `1`.
     FreeCamera,
 }
 
-/// The value of data supposedly from the controller, although RailDriver does offer some
-/// 'virtual' values.
+/// The value of data supposedly from the controller, although
+/// RailDriver does offer some 'virtual' values.
 #[derive(Debug)]
 pub enum ControllerValue {
     /// Latitude of the player
@@ -200,8 +201,8 @@ pub type Result<T> = std::result::Result<T, RailDriverError>;
 #[derive(Debug)]
 /// Errors returned by the operation being performed.
 pub enum RailDriverError {
-    /// The simulator doens't think this context is connected, therefore the operation cannot
-    /// continue.
+    /// The simulator doens't think this context is connected, therefore
+    /// the operation cannot continue.
     NotConnected,
 }
 
@@ -217,28 +218,39 @@ impl Drop for Context {
 }
 
 impl Context {
-
     /// Creates a new controller context with the simulator.
     pub fn new() -> Self {
-        let mut val = Self {
-            connected: false,
-        };
+        let mut val = Self { connected: false };
         val.connect();
         val
     }
 
+    /// Connect this session to TSC.
     fn connect(&mut self) {
-        unsafe { libraildriver::SetRailDriverConnected(true); }
+        unsafe {
+            libraildriver::SetRailDriverConnected(true);
+        }
         self.connected = true;
     }
 
+    /// Disconnect this session from TSC.
+    /// 
+    /// You do not need to explicitly disconnect a session as it is
+    /// always disconnected in [`Context::drop`].
     fn disconnect(&mut self) {
-        unsafe { libraildriver::SetRailDriverConnected(false); }
+        unsafe {
+            libraildriver::SetRailDriverConnected(false);
+        }
         self.connected = false;
     }
 
-    /// Return the value of `of`. Depending on `kind`, this may return the current value, a
-    /// minimum, or a maximum.
+    /// Return the value of `of`. Depending on `kind`, this may return
+    /// the current value, a minimum, or a maximum.
+    /// 
+    /// # Errors
+    /// 
+    /// Returns Err([`RailDriverError::NotConnected`]) if this session
+    /// is not connected with TSC.
     pub fn get_value(&self, of: Value, kind: Kind) -> Result<f32> {
         if !self.connected {
             return Err(RailDriverError::NotConnected);
@@ -249,18 +261,31 @@ impl Context {
     }
 
     /// Set the value of `of` within the simulator to `value`.
+    /// 
+    /// # Errors
+    /// 
+    /// Returns Err([`RailDriverError::NotConnected`]) if this session
+    /// is not connected with TSC.
     pub fn set_value(&self, of: Value, value: i32) -> Result<()> {
         if !self.connected {
             return Err(RailDriverError::NotConnected);
         }
         let of = of as libc::c_int;
         let value = value as libc::c_int;
-        unsafe { libraildriver::SetRailSimValue(of, value); }
+        unsafe {
+            libraildriver::SetRailSimValue(of, value);
+        }
         Ok(())
     }
 
-    /// Return the value of `of` from the virtual controller. Depending on `kind`, this may
-    /// return the current value, a minimum, or a maximum.
+    /// Return the value of `of` from the virtual controller. Depending
+    /// on `kind`, this may return the current value, a minimum, or a
+    /// maximum.
+    /// 
+    /// # Errors
+    /// 
+    /// Returns Err([`RailDriverError::NotConnected`]) if this session
+    /// is not connected with TSC.
     pub fn get_controller_value(&self, of: ControllerValue, kind: Kind) -> Result<f32> {
         if !self.connected {
             return Err(RailDriverError::NotConnected);

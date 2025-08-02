@@ -1,15 +1,20 @@
 [package]
 name = "libraildriver"
-version = "0.1.2"
-authors = ["Lily Hopkins <bsalarius@gmail.com>"]
+version = "0.1.3"
+authors = ["Lily Hopkins <lily@hpkns.uk>"]
 edition = "2018"
-description = "FFI bindings for TS2020's RailDriver.dll"
+description = "FFI bindings for TSC's RailDriver.dll"
 license = "MIT"
-homepage = "https://github.com/Bsalarius/libraildriver"
-repository = "https://github.com/Bsalarius/libraildriver"
+homepage = "https://github.com/lilopkins/libraildriver"
+repository = "https://github.com/lilopkins/libraildriver"
+keywords = ["dll", "rail-driver", "tsc", "simulation"]
+categories = ["simulation"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[badges.maintenance]
+status = "passively-maintained"
+
 [dependencies]
 libc = "0.2"
-libraildriver-sys = "0.1"
+libraildriver-sys = "0.1.3"
